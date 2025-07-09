@@ -1,0 +1,90 @@
+<?php
+    require 'data.php';
+
+    function load_prize_board() {
+        global $prize_status;
+        if ($prize_status) {
+            for($i = 0; $i < (count($prize_status) / 2); $i++) {
+                echo '<tr>';
+                echo '<td><span>$</span><span>'.number_format($prize_status[$i]['amount']).'</span></td>';
+                echo '<td><span>$</span><span>'.number_format($prize_status[$i + (count($prize_status) / 2)]['amount']).'</span></td>';
+                echo '</tr>';
+            }
+        }
+    }
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" type="text/css" href="game.css">
+    <link rel="icon" href="assets/icon.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width => true, initial-scale=1.0">
+    <title>Deal or No Deal</title>
+</head>
+
+<body>    
+    <form method="game.php" action="post">
+
+        <div id="header">
+            <span id="prompt">Choose your case</span>
+            <img id="banner" src="assets/banner.png" alt="banner">
+        </div>
+
+        <div id="main">
+            <div id="amounts">
+                <table>
+                    <?php load_prize_board(); ?>
+                </table>
+            </div>
+            <div id="options">
+                <table>
+                    <tr>
+                        <td><label><input type="radio" name="selected_case" value="19" required><span class="case-num">19</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="20" required><span class="case-num">20</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="21" required><span class="case-num">21</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="22" required><span class="case-num">22</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="23" required><span class="case-num">23</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="24" required><span class="case-num">24</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                    </tr>
+                    <tr>
+                        <td><label><input type="radio" name="selected_case" value="13" required><span class="case-num">13</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="14" required><span class="case-num">14</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="15" required><span class="case-num">15</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="16" required><span class="case-num">16</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="17" required><span class="case-num">17</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="18" required><span class="case-num">18</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                    </tr>
+                    <tr>
+                        <td><label><input type="radio" name="selected_case" value="7" required><span class="case-num">7</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="8" required><span class="case-num">8</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="9" required><span class="case-num">9</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="10" required><span class="case-num">10</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="11" required><span class="case-num">11</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="12" required><span class="case-num">12</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                    </tr>
+                    <tr>
+                        <td><label><input type="radio" name="selected_case" value="1" required><span class="case-num">1</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="2" required><span class="case-num">2</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="3" required><span class="case-num">3</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="4" required><span class="case-num">4</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="5" required><span class="case-num">5</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                        <td><label><input type="radio" name="selected_case" value="6" required><span class="case-num">6</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>
+                    </tr>
+                    </tr>
+                    <tr id="selections">
+                        <td colspan="4">
+                            <button id="btn-select" type="submit">Confirm Choice</button>
+                        </td>
+                        <td>Your Case:</td>
+                        <td><span class="case-num">?</span><img class="case" src="assets/case.png" alt="briefcase"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </form>
+</body>
+
+</html>
