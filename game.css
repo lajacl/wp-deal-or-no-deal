@@ -1,0 +1,131 @@
+body {
+    /* margin: 0; */
+    background-color: white;
+    font-weight: bold;
+}
+
+/* Header */
+
+#header {    
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+#banner {
+    max-height: 50px;
+    margin-right: 25px;
+}
+
+#prompt {
+    font-size: 25px;
+    margin-left: 25px;
+    align-content: center;
+}
+
+/* Main Content */
+
+#main {
+    display: flex;
+}
+
+#amounts {
+    background-color: black;
+    padding: 20px;
+}
+
+#amounts table {
+    border-collapse: separate;
+    border-spacing: 5px;
+    margin: auto;
+}
+
+#amounts table td {
+    font-weight: bold;
+    padding: 10px;
+    background-color: goldenrod;
+    border: 3px solid goldenrod;
+    border-radius: 8px;
+    width: 50%;
+    min-width: 100px;
+}
+
+#amounts table td span:first-child {
+    margin-right: 20px;
+}
+
+#amounts table td span:last-child {
+    float: right;
+}
+
+#amounts table td.seen {
+    background-color: dimgray;
+    border-style: dotted;
+}
+
+#options {
+    background-color: black;
+    flex: 1;
+}
+
+#options table {
+    border-spacing: 0;
+}
+
+#options td {
+    position: relative;
+}
+#options td:hover {
+    box-shadow: 0 0 10px 5px orange;
+}
+
+#options img.case {
+    max-width: 100%;
+    min-width: 120px;
+}
+
+.case-num {
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 75px;
+    text-shadow: 2px 2px gray;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin-top: 5px;
+}
+
+#options input[type="radio"] {
+    display: none;
+    position: relative;
+    left: 50%;
+    transform: translate(-50%);
+}
+
+#options td:has(input[type="radio"]:checked) {    
+    box-shadow: 0 0 10px 5px orange;
+}
+
+/* Footer */
+#selections {
+    background-color: white;
+}
+
+#footer {
+    padding: 20px;
+    text-align: center;
+}
+
+button#btn-select {
+    min-width: 10%;
+    height: 50px;
+    background-color: black;
+    color: white;
+    border: 8px double goldenrod;
+    border-radius: 12px;
+}
+
+#btn-select:hover {
+    color: goldenrod;
+}
