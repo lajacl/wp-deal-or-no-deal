@@ -8,7 +8,6 @@
     $player_case;
     $round;
     $cases_per_round = [6, 5, 4, 3, 2, 1, 1];
-    
 
     if (isset($_POST['state'])) {
         switch($_POST['state']) {
@@ -21,6 +20,10 @@
                 break;
             case "round":
                 updateRound();
+                break;
+            case "final_reveal":
+                finalReveal();
+                break;
         }
     }
 
@@ -104,7 +107,6 @@
         global $game_state;
 
         $game_state = $new_state;
-        $_SESSION["game_state"] = $game_state;
     }
 
     function setPlayerCase() {
@@ -124,7 +126,7 @@
     function updateRound() {
         global $cases_per_round;
         global $round;
-
+        
         if(isset($_POST['selected_case']) && isset($_SESSION["round"])) {
             loadSavedData();
             updateCases();
@@ -148,13 +150,29 @@
 
     function updateCases() {
         global $cases;
+        global $prize_status;
+        $selected_case;
 
         foreach ($cases as &$case) {
             if ($case['caseId'] == $_POST['selected_case']) {
                 $case['picked'] = true;
+                $selected_case = $case;
                 break;
             }
         }
         $_SESSION["cases"] = $cases;
+        
+        foreach($prize_status as &$prize) {
+            if ($prize['amount'] == $selected_case['value']) {
+                $prize['isSeen'] = true;
+                break;
+            }
+        }
+        $_SESSION['prize_status'] = $prize_status;
+    }
+
+    function finalReveal() {        
+        loadSavedData();
+        echo "At Final Reveal";
     }
 ?>

@@ -8,8 +8,8 @@
         if ($prize_status) {
             for($i = 0; $i < (count($prize_status) / 2); $i++) {
                 echo '<tr>';
-                echo '<td><span>$</span><span>'.number_format($prize_status[$i]['amount']).'</span></td>';
-                echo '<td><span>$</span><span>'.number_format($prize_status[$i + (count($prize_status) / 2)]['amount']).'</span></td>';
+                echo (!$prize_status[$i]['isSeen'] ? '<td>' : '<td class="seen">').'<span>$</span><span>'.number_format($prize_status[$i]['amount']).'</span></td>';
+                echo (!$prize_status[$i + (count($prize_status) / 2)]['isSeen'] ? '<td>' : '<td class="seen">').'<span>$</span><span>'.number_format($prize_status[$i + (count($prize_status) / 2)]['amount']).'</span></td>';
                 echo '</tr>';
             }
         }
@@ -42,11 +42,14 @@
     function displayPrompt() {
         global $player_case;
         global $round;
+        global $game_state;
 
         if($round["to_open"] > 0 && isset($player_case)) {
-            echo '<span id="prompt">For round '.$round["number"].' choose '.$round["to_open"].' '.($round["to_open"] > 1 ? 'cases' : 'case').':</span>';
+            echo '<span id="prompt">For round '.$round["number"].', choose '.$round["to_open"].' '.($round["to_open"] > 1 ? 'cases' : 'case').':</span>';
         } elseif (!isset($player_case)) {
             echo '<span id="prompt">First, choose your case:</span>';
+        } elseif($game_state == "final_reveal") {
+            echo '<span id="prompt">Time for the final reveal:</span>';
         }
     }
 ?>
