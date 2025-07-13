@@ -5,17 +5,22 @@
     $num_rows = 4;
     $num_cols = 6;   
     $cases = [];
-    $player_case = '?';
+    $player_case;
     $round;
+    $cases_per_round = [6, 5, 4, 3, 2, 1, 1];
+    
 
     if (isset($_POST['state'])) {
         switch($_POST['state']) {
             case "new_game":
+                resetGame();
                 setupGame();
                 break;
             case "player_case":
                 setPlayerCase();
                 break;
+            case "round":
+                updateRound();
         }
     }
 
@@ -60,7 +65,7 @@
         $cases = [];
         
         for ($i = 0; $i < $num_cases; $i++) {
-            $cases[] = ["caseId" => $i + 1, "value" => $money_values[$i]];
+            $cases[] = ["caseId" => $i + 1, "value" => $money_values[$i], "picked" => false];
         }        
         
         $_SESSION["cases"] = $cases;
@@ -72,6 +77,8 @@
         global $prize_status;
         global $cases;
         global $player_case;
+        global $game_state;
+        global $round;
 
         if(isset($_SESSION["prize_status"]))
             $prize_status = $_SESSION["prize_status"];
@@ -79,13 +86,25 @@
             $cases = $_SESSION["cases"];
         if(isset($_SESSION["player_case"]))
             $player_case = $_SESSION["player_case"];
+        if(isset($_SESSION["game_state"]))
+            $game_state = $_SESSION["game_state"];
+        if(isset($_SESSION["round"]))
+            $round = $_SESSION["round"];
+    }
+
+    function resetGame() {
+        unset($_SESSION["prize_status"]);
+        unset($_SESSION["cases"]);
+        unset($_SESSION["player_case"]);
+        unset($_SESSION["game_state"]);
+        unset($_SESSION["round"]);
     }
 
     function updateGameState($new_state) {
         global $game_state;
 
         $game_state = $new_state;
-        $_SESSION["game_state"] = $new_state;
+        $_SESSION["game_state"] = $game_state;
     }
 
     function setPlayerCase() {
@@ -96,9 +115,46 @@
         if (isset($_POST['selected_case'])) {
             $player_case = $_POST['selected_case'];
             $_SESSION['player_case'] = $player_case;
+            updateGameState("round");
+            updateRound();                    
+            updateCases();
         }
-        
-        updateGameState("round");
-        $round = 1;
+    }
+
+    function updateRound() {
+        global $cases_per_round;
+        global $round;
+
+        if(isset($_POST['selected_case']) && isset($_SESSION["round"])) {
+            loadSavedData();
+            updateCases();
+
+            $round = $_SESSION["round"];
+            $round["to_open"] -= 1;
+
+            if ($round["to_open"] == 0) {
+                if ($round["number"] < count($cases_per_round)) {                    
+                    $round["number"] += 1;
+                    $round["to_open"] = $cases_per_round[$round["number"] - 1];
+                } else {
+                    updateGameState("final_reveal");
+                }                
+            }            
+        } else {
+            $round = ["number" => 1, "to_open" => $cases_per_round[0]];
+        }
+        $_SESSION["round"] = $round;
+    }
+
+    function updateCases() {
+        global $cases;
+
+        foreach ($cases as &$case) {
+            if ($case['caseId'] == $_POST['selected_case']) {
+                $case['picked'] = true;
+                break;
+            }
+        }
+        $_SESSION["cases"] = $cases;
     }
 ?>

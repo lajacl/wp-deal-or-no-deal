@@ -25,7 +25,7 @@
             echo "<tr>";
             for($j = 0; $j < $num_cols; $j++) {
                 $index = ($i * $num_cols) + $j;
-                if ($cases[$index]["caseId"] != $player_case) {             
+                if (!$cases[$index]["picked"]) {             
                     echo '<td class="case"><label><input type="radio" name="selected_case" value="'.$cases[$index]["caseId"].'" required><span class="case-num">'.$cases[$index]["caseId"].'</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>';
                 } else {
                     echo "<td></td>";
@@ -33,6 +33,17 @@
             }
             echo "</tr>";
         }   
+    }
+
+    function displayPrompt() {
+        global $player_case;
+        global $round;
+
+        if(isset($player_case)) {
+            echo '<span id="prompt">For round '.$round["number"].' choose '.$round["to_open"].' '.($round["to_open"] > 1 ? 'cases' : 'case').':</span>';
+        } else {
+            echo '<span id="prompt">First, choose your case:</span>';
+        } 
     }
 ?>
 
@@ -52,11 +63,7 @@
         <?php echo '<input type="hidden" name="state" value="'.$game_state.'">'; ?>
 
         <div id="header">
-            <?php if(isset($player_case)): ?>
-                <span id="prompt">Choose a case:</span>
-            <?php else: ?>
-                <span id="prompt">First, choose your case:</span>
-            <?php endif; ?>
+            <?php displayPrompt(); ?>
             <img id="banner" src="assets/banner.png" alt="banner">
         </div>
 
@@ -74,7 +81,7 @@
                             <button id="btn-select" type="submit">Confirm Choice</button>
                         </td>
                         <td id="label">Your Case:</td>
-                        <td><span class="case-num"><?php echo $player_case; ?></span><img class="case" src="assets/case.png" alt="briefcase"></td>
+                        <td><span class="case-num"><?php echo isset($player_case) ? $player_case : '?'; ?></span><img class="case" src="assets/case.png" alt="briefcase"></td>
                     </tr>
                 </table>
             </div>
