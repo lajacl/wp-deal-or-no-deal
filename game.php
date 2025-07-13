@@ -23,12 +23,16 @@
         
         for ($i = $num_rows - 1; $i >= 0; $i--) {
             echo "<tr>";
-            for($j = 0; $j < $num_cols; $j++) {
+            for ($j = 0; $j < $num_cols; $j++) {
                 $index = ($i * $num_cols) + $j;
-                if (!$cases[$index]["picked"]) {             
+
+                if ($cases[$index]["caseId"] != $player_case && $cases[$index]["caseId"] == $_POST['selected_case']) {
+                    echo '<td><span id="case-closed"><span class="case-num">'.$cases[$index]["caseId"].'</span><img src="assets/case.png" alt="closed briefcase"></span>';
+                    echo '<span id ="case-open"><span id="case-val">$'.number_format($cases[$index]["value"]).'</span><img src="assets/case_open.png" alt="open briefcase"></span></label></td>';
+                } elseif (!$cases[$index]["picked"]) {             
                     echo '<td class="case"><label><input type="radio" name="selected_case" value="'.$cases[$index]["caseId"].'" required><span class="case-num">'.$cases[$index]["caseId"].'</span><img class="case" src="assets/case.png" alt="briefcase"></label></td>';
                 } else {
-                    echo "<td></td>";
+                    echo '<td><img class="case hidden-case" src="assets/case.png" alt="briefcase"></td>';
                 }
             }
             echo "</tr>";
@@ -39,11 +43,11 @@
         global $player_case;
         global $round;
 
-        if(isset($player_case)) {
+        if($round["to_open"] > 0 && isset($player_case)) {
             echo '<span id="prompt">For round '.$round["number"].' choose '.$round["to_open"].' '.($round["to_open"] > 1 ? 'cases' : 'case').':</span>';
-        } else {
+        } elseif (!isset($player_case)) {
             echo '<span id="prompt">First, choose your case:</span>';
-        } 
+        }
     }
 ?>
 
