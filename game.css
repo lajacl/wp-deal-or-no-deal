@@ -1,7 +1,7 @@
 body {
-    /* margin: 0; */
     background-color: white;
     font-weight: bold;
+    cursor: not-allowed;
 }
 
 /* Header */
@@ -70,17 +70,19 @@ body {
 
 #options table {
     border-spacing: 0;
+    border: 10px solid black;
 }
 
 #options td {
     position: relative;
 }
-#options td:hover {
+
+#options td.case:hover {
     box-shadow: 0 0 10px 5px orange;
 }
 
-#options tr:last-child td:hover {
-    box-shadow: none;
+#options label {
+    cursor: pointer;
 }
 
 #options img.case {
@@ -107,13 +109,26 @@ body {
     transform: translate(-50%);
 }
 
-#options td:has(input[type="radio"]:checked) {    
+#options td.case:has(input[type="radio"]:checked) {    
     box-shadow: 0 0 10px 5px orange;
+}
+
+#options:not(:has(input[type="radio"]:checked)) #btn-select {
+    display: none;
 }
 
 /* Player Selections */
 #selections {
     background-color: white;
+}
+
+#selections #buttons{
+    text-align: center;
+}
+
+#selections #label {
+    text-align: right;
+    font-weight: bold;
 }
 
 button#btn-select {
@@ -125,15 +140,6 @@ button#btn-select {
     border-radius: 12px;
 }
 
-#btn-select:hover {
+button#btn-select:hover {
     color: goldenrod;
-}
-
-@keyframes openCase {
-    0% {
-        back: 0;
-    }
-    100% {
-        opacity: 1;
-    }
 }
