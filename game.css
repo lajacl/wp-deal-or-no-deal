@@ -79,6 +79,10 @@ body {
     box-shadow: 0 0 10px 5px orange;
 }
 
+#options tr:last-child td:hover {
+    box-shadow: none;
+}
+
 #options img.case {
     max-width: 100%;
     min-width: 120px;
@@ -107,14 +111,9 @@ body {
     box-shadow: 0 0 10px 5px orange;
 }
 
-/* Footer */
+/* Player Selections */
 #selections {
     background-color: white;
-}
-
-#footer {
-    padding: 20px;
-    text-align: center;
 }
 
 button#btn-select {
