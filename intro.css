@@ -6,11 +6,9 @@ body {
 
 #main {
     width: 100%;
-    z-index: 0;
 }
 
 .fade-in {
-    opacity: 0;
     animation: fadeIn 3s forwards;
 }
 
@@ -24,7 +22,6 @@ table {
     position: absolute;
     right: 0;
     margin: 50px;
-    z-index: 1;
 }
 
 input[type="radio"] {
@@ -36,7 +33,7 @@ input[type="radio"] {
     text-align: center;
 }
 
-#btn-play {
+button {
     opacity: 0;
     min-width: 10%;
     background-color: black;
@@ -45,15 +42,57 @@ input[type="radio"] {
     border-radius: 12px;
     padding: 8px;
     margin: 8px;
-    animation: fadeIn 3s forwards 1s;
+    animation: fadeIn 3s forwards 0.2s;
 }
 
-#btn-play:hover {
+button:hover {
     color: goldenrod;
 }
 
 img#intro {
     width: 100%;
+}
+
+#btn-rules {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: 50px;
+}
+
+.rules {
+    visibility: hidden;
+    background: black;
+    color: white;
+    font-weight: bold;
+    padding: 20px;
+    border: 4px solid goldenrod;
+    border-radius: 10px;
+    position: absolute;
+    top: 0;
+    margin: 50px;
+    text-align: center;
+    max-width: 50%;
+    max-height: 50%;
+    max-height: 700px;
+    overflow: auto;
+}
+
+#rules-close {
+    text-align: right;
+}
+
+#rules-close input {
+    font-weight: bold;
+}
+
+#rules-close input:hover {
+    color: black;
+    background: goldenrod;
+}
+
+.show {
+    visibility: visible;
 }
 
 @keyframes fadeIn {

@@ -29,18 +29,18 @@ body {
     display: flex;
 }
 
-#amounts {
+#prize_board {
     background-color: black;
     padding: 20px;
 }
 
-#amounts table {
+#prize_board table {
     border-collapse: separate;
-    border-spacing: 5px;
+    border-spacing: 10px;
     margin: auto;
 }
 
-#amounts table td {
+#prize_board table td {
     font-weight: bold;
     padding: 10px;
     background-color: goldenrod;
@@ -50,15 +50,15 @@ body {
     min-width: 100px;
 }
 
-#amounts table td span:first-child {
+#prize_board table td span:first-child {
     margin-right: 20px;
 }
 
-#amounts table td span:last-child {
+#prize_board table td span:last-child {
     float: right;
 }
 
-#amounts table td.seen {
+#prize_board table td.seen {
     opacity: .5;
 }
 
@@ -71,14 +71,19 @@ body {
     border-spacing: 0;
     border: 10px solid black;
     height: 100%;
+    margin: auto;
+    min-width: 75%;
+    max-width: 90%;
 }
 
-#board td {
+#board td.case-wrapper {
     position: relative;
-    width: calc(100% / 6);
+    max-width: calc(100vh / 6);
+    text-align: center;
 }
 
-#board td.case:hover {
+#board td.case-active:hover,
+#board td.case-active:has(input[type="radio"]:checked) {
     box-shadow: 0 0 10px 5px goldenrod;
 }
 
@@ -91,11 +96,6 @@ body {
 #case-open img {
     max-width: 100%;
     min-width: 120px;
-}
-
-#board h3 {
-    color: white;
-    text-align: center;
 }
 
 .case-num {
@@ -134,9 +134,6 @@ body {
 }
 
 #case-open {
-    position: absolute;
-    top: 0;
-    z-index: 1;
     opacity: 0;
     animation: fadeIn 1s forwards 1s;
 }
@@ -152,16 +149,9 @@ body {
     transform: translate(-50%);
 }
 
-#board td.case:has(input[type="radio"]:checked) {
-    box-shadow: 0 0 10px 5px goldenrod;
-}
-
-#board:not(:has(input[type="radio"]:checked)) #btn-select {
-    display: none;
-}
-
 #banker {
     text-align: center;
+    height: 100%;
 }
 
 #past-offers {
@@ -171,16 +161,16 @@ body {
     border-radius: 10px;
     background-color: white;
     padding: 20px;
-    margin: 20px;
+    margin: 25px;
     height: -webkit-fill-available;
 }
 
-div#final-reveal {
+div#reveal {
     position: relative;
     text-align: center;
 }
 
-#final-reveal #closed {
+#reveal #closed {
     width: 100%;
     position: absolute;
     top: 50%;
@@ -190,15 +180,15 @@ div#final-reveal {
     animation: fadeOut 1s forwards 1s;
 }
 
-#final-reveal #closed .case-num {
+#reveal #closed .case-num {
     font-size: 150px;
 }
 
-#final-reveal #closed img {
+#reveal #closed img {
     max-width: 280px;
 }
 
-#final-reveal #open {
+#reveal #open {
     opacity: 0;
     animation: fadeIn 1s forwards 1s;
 }
@@ -218,16 +208,16 @@ div#final-reveal {
     font-weight: bold;
 }
 
-/* Player Selections */
-#selections {
+/* HUD */
+#hud {
     background-color: white;
 }
 
-#selections #buttons {
+#hud #buttons {
     text-align: center;
 }
 
-#selections #case-label {
+#hud #case-label {
     text-align: right;
     font-weight: bold;
     font-size: 20px;
@@ -243,7 +233,11 @@ button.btn {
     margin: 10px;
 }
 
-button#btn-select:hover {
+#board:not(:has(input[type="radio"]:checked)) #btn-confirm {
+    display: none;
+}
+
+#hud button:hover {
     color: goldenrod;
 }
 
@@ -276,11 +270,15 @@ button#btn-select:hover {
     background-color: red;
 }
 
-.round-btn:hover {
+#hud .round-btn:hover {
     border: 4px inset goldenrod;
 }
 
 /* Animations */
+
+.fade-in {
+    animation: fadeIn 3s forwards;
+}
 
 @keyframes fadeOut {
     0% {

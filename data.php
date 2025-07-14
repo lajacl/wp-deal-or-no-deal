@@ -41,6 +41,15 @@
         resetGame();
     }
 
+    function resetGame() {
+        global $game_state;
+        global $player;       
+        unset($_SESSION['game']);
+        $game_state = "new_game";
+        $player = $_SESSION['player'];
+        setupGame();
+    }
+
     function setupGame() {
         global $prize_status;
         global $cases;
@@ -124,15 +133,6 @@
             $player = $_SESSION['player'];
     }
 
-    function resetGame() {
-        global $game_state;
-        global $player;       
-        unset($_SESSION['game']);
-        $game_state = "new_game";
-        $player = $_SESSION['player'];
-        setupGame();
-    }
-
     function updateGameState($new_state) {
         global $game_state;
 
@@ -159,7 +159,9 @@
         global $banker_offer;
         
         if (isset($_SESSION['game']['round'])) {
-            updateCases();
+            if (!updateCases()) {
+                return;
+            }
 
             $round["to_open"] -= 1;
             if ($round["to_open"] <= 0) {  
@@ -185,13 +187,20 @@
         global $prize_status;
         $selected_case;
 
-        foreach ($cases as &$case) {
-            if ($case['caseId'] == $_POST['selected_case']) {
-                $case['picked'] = true;
-                $selected_case = $case;
-                break;
+        if (isset($_POST['selected_case'])) {
+            foreach ($cases as &$case) {
+                if ($case['caseId'] == $_POST['selected_case']) {
+                    if ($case['picked'] == false) {
+                        $case['picked'] = true;
+                        $selected_case = $case;
+                        break;
+                    } else {
+                        return false;
+                    }
+                }
             }
         }
+        unset($case);
         $_SESSION['game']['cases'] = $cases;
         
         if ($selected_case['caseId'] != $player_case['caseId']) {
@@ -201,8 +210,11 @@
                     break;
                 }
             }
+            unset($prize);
         }
         $_SESSION['game']['prize_status'] = $prize_status;
+
+        return true;
     }
 
     function setBankerOffer() {
@@ -212,6 +224,7 @@
         global $offer_history;
         global $accept_offer;
         global $round;
+        global $cases_per_round;
         $remaining_num_cases;
         $remaining_values_sum;
         $remaining_average;
@@ -225,7 +238,7 @@
             }
             
             $remaining_average = $remaining_values_sum / $remaining_num_cases;
-            $banker_offer = floor($remaining_average * $round["number"] / 10);
+            $banker_offer = floor($remaining_average * $round["number"] / count($cases_per_round));
             $_SESSION['game']['banker_offer'] = $banker_offer;
         } else {
             $offer_history[] = $banker_offer;
@@ -255,21 +268,18 @@
             $_SESSION['game']['player_prize'] = $player_prize;
         }
 
-        if (isset($_SESSION['users'])) {
-            $userInfo = $_SESSION['users'][$player['username']];
+        if (!isset($player['high_score']) || (isset($player['high_score']) && $player_prize > ($player['high_score']))) {
+            date_default_timezone_set("America/New_York");
+            $date = date("F j, Y g:i a");
 
-            if (!isset($player['high_score']) || (isset($player['high_score']) && $player_prize > ($player['high_score']))) {                    
-                date_default_timezone_set("America/New_York");
-                $date = date("F j, Y g:i a");
-
-                $userInfo['high_score'] = $player_prize;
-                $userInfo['high_score_date'] = $date;
-                $_SESSION['users'][$player['username']] = $userInfo;
-                
-                $player['high_score'] = $player_prize;
-                $player['high_score_date'] = $date;
-                $_SESSION['player'] = $player;
+            if (isset($_SESSION['users']) && array_key_exists($player['username'], $_SESSION['users'])) {
+                $_SESSION['users'][$player['username']]['high_score'] = $player_prize;
+                $_SESSION['users'][$player['username']]['high_score_date'] = $date;
             }
+            
+            $player['high_score'] = $player_prize;
+            $player['high_score_date'] = $date;
+            $_SESSION['player'] = $player;
         }
         
         if (isset($_POST['prize'])) {
