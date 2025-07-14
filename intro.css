@@ -4,36 +4,63 @@ body {
     font-family: sans-serif;
 }
 
-img#intro {
-    opacity: 0;
+#main {
     width: 100%;
-    animation: fadeIn 3s forwards 2s;
     z-index: 0;
 }
 
-#btn-start {
+.fade-in {
     opacity: 0;
-    min-width: 10%;
-    height: 50px;
-    background-color: black;
-    color: white;
-    border: 8px double yellow;
-    border-radius: 12px;
-    position: absolute;
-    z-index: 2;
-    top: 100px;
-    right: 100px;
-    animation: fadeIn 3s forwards 3s;
+    animation: fadeIn 3s forwards;
 }
 
-#btn-start:hover {
-    color: yellow
+table {
+    background: black;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border: 4px solid goldenrod;
+    border-radius: 10px;
+    position: absolute;
+    right: 0;
+    margin: 50px;
+    z-index: 1;
+}
+
+input[type="radio"] {
+    accent-color: goldenrod;
+}
+
+#error {
+    color: red;
+    text-align: center;
+}
+
+#btn-play {
+    opacity: 0;
+    min-width: 10%;
+    background-color: black;
+    color: white;
+    border: 8px double goldenrod;
+    border-radius: 12px;
+    padding: 8px;
+    margin: 8px;
+    animation: fadeIn 3s forwards 1s;
+}
+
+#btn-play:hover {
+    color: goldenrod;
+}
+
+img#intro {
+    width: 100%;
 }
 
 @keyframes fadeIn {
     0% {
         opacity: 0;
     }
+
     100% {
         opacity: 1;
     }

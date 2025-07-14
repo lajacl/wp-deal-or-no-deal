@@ -16,27 +16,30 @@ body {
 }
 
 #header {
-    padding: 10px;
+    padding: 20px;
     display: flex;
     justify-content: space-between;
     background-color: white;
-    max-height: 50px;
     position: relative;
     z-index: 2;
 }
 
 #header button#btn {
-    min-width: 10%;
+    min-width: 150px;
     height: 50px;
     background-color: black;
     color: white;
     border: 8px double goldenrod;
     border-radius: 12px;
-    margin: 10px;
+    margin: 0 10px;
 }
 
 #header button#btn:hover {
     color: goldenrod;
+}
+
+form {
+    display: inline;
 }
 
 #header a {
@@ -76,5 +79,6 @@ body {
 
     100% {
         opacity: 0;
+        display: none;
     }
 }
