@@ -160,6 +160,10 @@ body {
     display: none;
 }
 
+#banker {
+    text-align: center;
+}
+
 #past-offers {
     text-align: center;
     font-weight: bold;
@@ -210,6 +214,10 @@ div#final-reveal {
     margin: 20px;
 }
 
+#high-score {
+    font-weight: bold;
+}
+
 /* Player Selections */
 #selections {
     background-color: white;
@@ -241,7 +249,7 @@ button#btn-select:hover {
 
 #phone {
     max-height: 200px;
-    animation: shake .2s infinite 2s;
+    animation: shake .2s infinite 1s;
     cursor: grab;
 }
 
