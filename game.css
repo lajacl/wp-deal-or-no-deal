@@ -62,35 +62,40 @@ body {
     opacity: .5;
 }
 
-#options {
+#board {
     background-color: black;
     flex: 1;
 }
 
-#options table {
+#board table {
     border-spacing: 0;
     border: 10px solid black;
     height: 100%;
 }
 
-#options td {
+#board td {
     position: relative;
     width: calc(100% / 6);
 }
 
-#options td.case:hover {
-    box-shadow: 0 0 10px 5px orange;
+#board td.case:hover {
+    box-shadow: 0 0 10px 5px goldenrod;
 }
 
-#options label {
+#board label {
     cursor: pointer;
 }
 
-#options img.case,
+#board img.case,
 #case-closed img,
 #case-open img {
     max-width: 100%;
     min-width: 120px;
+}
+
+#board h3 {
+    color: white;
+    text-align: center;
 }
 
 .case-num {
@@ -140,24 +145,30 @@ body {
     visibility: hidden;
 }
 
-#options input[type="radio"]:not(:last-child) {
+#board input[type="radio"]:not(:last-child) {
     display: none;
     position: relative;
     left: 50%;
     transform: translate(-50%);
 }
 
-#options td.case:has(input[type="radio"]:checked) {
-    box-shadow: 0 0 10px 5px orange;
+#board td.case:has(input[type="radio"]:checked) {
+    box-shadow: 0 0 10px 5px goldenrod;
 }
 
-#options:not(:has(input[type="radio"]:checked)) #btn-select {
+#board:not(:has(input[type="radio"]:checked)) #btn-select {
     display: none;
 }
 
 #past-offers {
-    color: white;
     text-align: center;
+    font-weight: bold;
+    border: 5px solid goldenrod;
+    border-radius: 10px;
+    background-color: white;
+    padding: 20px;
+    margin: 20px;
+    height: -webkit-fill-available;
 }
 
 div#final-reveal {
@@ -189,10 +200,14 @@ div#final-reveal {
 }
 
 #open #case-val {
-    font-size: xxx-large;
+    font-size: xx-large;
     border-radius: 12px;
     padding: 5px 10px;
     margin: 0;
+}
+
+#open #case-open {
+    margin: 20px;
 }
 
 /* Player Selections */
@@ -242,7 +257,7 @@ button#btn-select:hover {
     text-align: center;
     display: inline-block;
     vertical-align: text-bottom;
-    border: 4px outset darkgoldenrod;
+    border: 4px outset goldenrod;
 }
 
 .round-btn:first-child {

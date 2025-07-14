@@ -1,33 +1,44 @@
 <?php
-    $game_state;
-    $prize_status = [];
     $num_cases = 24;
     $num_rows = 4;
     $num_cols = 6;   
+    $cases_per_round = [6, 5, 4, 3, 2, 1, 1];
+    $game_state;
+    $game_state_idx;
+    $round;
+    $prize_status = [];
     $cases = [];
     $player_case;
-    $round;
-    $cases_per_round = [6, 5, 4, 3, 2, 1, 1];
     $banker_offer;
-    $player_winnings;
+    $accept_offer;
+    $offer_history = [];
+    $player_prize;
+
 
     if (isset($_POST['state'])) {
         switch($_POST['state']) {
             case "new_game":
-                resetGame();
+                session_unset();
                 setupGame();
                 break;
-            case "player_case":
+            case "player_case":                
+                loadSavedData();    
                 setPlayerCase();
                 break;
-            case "round":
+            case "round":                
+                loadSavedData(); 
                 updateRound();
                 break;
-            case "banker_offer":
+            case "banker_offer":                
+                loadSavedData(); 
                 setBankerOffer();
                 break;
-            case "final_reveal":
+            case "final_reveal":                
+                loadSavedData(); 
                 finalReveal();
+                break;
+            case "win_screen":                
+                loadSavedData();
                 break;
         }
     }
@@ -67,7 +78,7 @@
         foreach ($money_values as $value) {
                 $prize_status[] = ['amount' => $value, 'isSeen' => false];
         }
-        $_SESSION["prize_status"] = $prize_status;
+        $_SESSION['prize_status'] = $prize_status;
 
         shuffle($money_values);
         $cases = [];
@@ -76,41 +87,40 @@
             $cases[] = ["caseId" => $i + 1, "value" => $money_values[$i], "picked" => false];
         }        
         
-        $_SESSION["cases"] = $cases;
+        $_SESSION['cases'] = $cases;
        
         updateGameState("player_case");
     }
 
     function loadSavedData() {
+        global $game_state;
         global $prize_status;
         global $cases;
         global $player_case;
-        global $game_state;
         global $round;
+        global $banker_offer;
+        global $accept_offer;
+        global $offer_history;
+        global $player_prize;
 
-        if(isset($_SESSION["prize_status"]))
-            $prize_status = $_SESSION["prize_status"];
-        if(isset($_SESSION["cases"]))
-            $cases = $_SESSION["cases"];
-        if(isset($_SESSION["player_case"]))
-            $player_case = $_SESSION["player_case"];
-        if(isset($_SESSION["game_state"]))
-            $game_state = $_SESSION["game_state"];
-        if(isset($_SESSION["round"]))
-            $round = $_SESSION["round"];
-        if(isset($_SESSION["banker_offer"]))
-        if(isset($_SESSION["player_winnings"]))
-            $player_winnings = $_SESSION["player_winnings"];
-    }
-
-    function resetGame() {
-        unset($_SESSION["prize_status"]);
-        unset($_SESSION["cases"]);
-        unset($_SESSION["player_case"]);
-        unset($_SESSION["game_state"]);
-        unset($_SESSION["round"]);
-        unset($SESSION["banker_offer"]);
-        unset($SESSION["player_winnings"]);
+        if (isset($_SESSION['game_state']))
+            $game_state = $_SESSION['game_state'];
+        if (isset($_SESSION['round']))
+            $round = $_SESSION['round'];
+        if (isset($_SESSION['prize_status']))
+            $prize_status = $_SESSION['prize_status'];
+        if (isset($_SESSION['cases']))
+            $cases = $_SESSION['cases'];
+        if (isset($_SESSION['player_case']))
+            $player_case = $_SESSION['player_case'];
+        if (isset($_SESSION['banker_offer']))
+            $banker_offer = $_SESSION['banker_offer'];
+        if (isset($_SESSION['accept_offer']))
+            $accept_offer = $_SESSION['accept_offer'];
+        if (isset($_SESSION['offer_history']))
+            $offer_history = $_SESSION['offer_history'];
+        if (isset($_SESSION['player_prize']))
+            $player_prize = $_SESSION['player_prize'];
     }
 
     function updateGameState($new_state) {
@@ -122,11 +132,10 @@
 
     function setPlayerCase() {
         global $player_case;
-
-        loadSavedData();
+        global $cases;
 
         if (isset($_POST['selected_case'])) {
-            $player_case = $_POST['selected_case'];
+            $player_case = $cases[$_POST['selected_case'] - 1];
             $_SESSION['player_case'] = $player_case;
             updateGameState("round");
             updateRound();                    
@@ -137,29 +146,27 @@
     function updateRound() {
         global $cases_per_round;
         global $round;
+        global $banker_offer;
         
-        if(isset($_SESSION["round"])) {
-            loadSavedData();
+        if (isset($_SESSION['round'])) {
             updateCases();
 
-            $round = $_SESSION["round"];
-
             $round["to_open"] -= 1;
-
-            if ($round["to_open"] == 0) {                
-                if ($round["number"] < count($cases_per_round)) {                    
-                    $round["number"] += 1;
-                    $round["to_open"] = $cases_per_round[$round["number"] - 1];
+            if ($round["to_open"] <= 0) {  
+                if (empty($banker_offer)) {
                     updateGameState("banker_offer");
-                    unset($SESSION["banker_offer"]);
+                } elseif ($round['number'] < count($cases_per_round)) {             
+                    $round['number'] += 1;
+                    $round['to_open'] = $cases_per_round[$round["number"] - 1];
+                    unset($_SESSION['banker_offer']);
                 } else {
                     updateGameState("final_reveal");
                 }                
-            }            
+            }     
         } else {
             $round = ["number" => 1, "to_open" => $cases_per_round[0]];
         }
-        $_SESSION["round"] = $round;
+        $_SESSION['round'] = $round;
     }
 
     function updateCases() {
@@ -175,10 +182,10 @@
                 break;
             }
         }
-        $_SESSION["cases"] = $cases;
+        $_SESSION['cases'] = $cases;
         
-        if ($selected_case['caseId'] != $player_case) {
-            foreach($prize_status as &$prize) {
+        if ($selected_case['caseId'] != $player_case['caseId']) {
+            foreach ($prize_status as &$prize) {
                 if ($prize['amount'] == $selected_case['value']) {
                     $prize['isSeen'] = true;
                     break;
@@ -191,19 +198,20 @@
     function setBankerOffer() {
         global $prize_status;
         global $banker_offer;
-        global $player_winnings;
+        global $player_prize;
+        global $offer_history;
+        global $accept_offer;
         $remaining_num_cases;
         $remaining_values_sum;
         $remaining_average;
         $remaining_max;
 
-        loadSavedData();
-        if(!isset($_POST["accept_offer"])) {
+        if (!isset($_POST['accept_offer'])) {
             foreach (array_reverse($prize_status) as $prize) {
                 if (!$prize['isSeen']) {
                     $remaining_num_cases += 1;
                     $remaining_values_sum += $prize['amount'];
-                    if($prize['amount'] > $remaining_max) {
+                    if ($prize['amount'] > $remaining_max) {
                         $remaining_max = $prize['amount'];
                     }
                 }
@@ -213,9 +221,15 @@
             $banker_offer = floor($remaining_average);
             $_SESSION['banker_offer'] = $banker_offer;
         } else {
-            if(filter_var($_POST["accept_offer"], FILTER_VALIDATE_BOOLEAN)) {
-                $player_winnings = $banker_offer;
-                $_SESSION['player_winnings'] = $player_winnings;
+            $offer_history[] = $banker_offer;
+            $_SESSION['offer_history'] = $offer_history;
+            
+            $accept_offer = filter_var($_POST['accept_offer'], FILTER_VALIDATE_BOOLEAN);
+            $_SESSION['accept_offer'] = $accept_offer;
+
+            if ($accept_offer) {
+                $player_prize = $banker_offer;
+                $_SESSION['player_prize'] = $player_prize;
                 updateGameState("final_reveal");
             } else {
                 updateGameState("round");
@@ -224,8 +238,18 @@
         }
     }
 
-    function finalReveal() {        
-        loadSavedData();
-        echo "At Final Reveal";
+    function finalReveal() {
+        global $player_case;   
+        global $player_prize;
+
+        if (empty($player_prize)) {
+            $player_prize = $player_case['value'];
+            $_SESSION['player_prize'] = $player_prize;
+        }
+        
+        if (isset($_POST['prize'])) {
+            unset($_POST['prize']);
+            updateGameState('win_screen');
+        }
     }
 ?>

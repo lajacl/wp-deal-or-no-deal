@@ -4,7 +4,7 @@
     
     $decimal_seperator = '.';
 
-    function load_prize_board() {
+    function loadPrizeBoard() {
         global $prize_status;
         global $decimal_seperator;
         
@@ -32,23 +32,27 @@
         echo '<tr>';
         if ($game_state == "banker_offer" && isset($banker_offer))  {
             echo '<td colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'"><div id="banker"><img src="assets/banker.gif" alt="The Banker"></div></td>';
-            echo '<td colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'"><div id="past-offers"> Previous Offers:<br><br>';
-            foreach ($offer_history as $offer) {
-                echo '$ '.number_format($offer).'<br><br>';
+            echo '<td colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'">';
+            if (!empty($offer_history)) {
+                echo '<div id="past-offers"><h2>Past Banker Offers:</h2>';
+                foreach ($offer_history as $offer) {
+                    echo '$ '.number_format($offer).'<br><br>';
+                }
+                echo '</div>';
             }
-            echo '</div></td>';
+            echo '</td>';
         } elseif ($game_state == "final_reveal") {
             echo '<td colspan="'.$num_cols.'" rowspan="'.$num_rows.'"><div id="final-reveal"><span id="closed"><span class="case-num">'.$player_case["caseId"].'</span><img src="assets/case.png" alt="closed briefcase"></span>';
             echo '<span id="open"><span id="case-val">$'.rtrim(rtrim(number_format($player_case["value"], 2), '0'), $decimal_seperator).'</span><img src="assets/case_open.png" alt="open briefcase"></span></div></td>';
 
         } elseif ($game_state == "win_screen") {
             if ($accept_offer)  {
-                echo '<td colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'"><div id="banker"><img src="assets/banker.gif" alt="The Banker"></div></td>';
+                echo '<td colspan="'.($num_cols / 2).'"><h3>Deal Taken</h3><div id="banker"><img src="assets/banker.gif" alt="The Banker"></div></td>';
             } else {
-                echo '<td id="open" colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'"><span id ="case-open"><span id="case-val">$'.rtrim(rtrim(number_format($player_case["value"], 2), '0'), $decimal_seperator).
+                echo '<td id="open" colspan="'.($num_cols / 2).'"><h3>No Deal Taken</h3><span id="case-open"><span id="case-val">$'.rtrim(rtrim(number_format($player_case["value"], 2), '0'), $decimal_seperator).
                 '</span><img src="assets/case_open.png" alt="open briefcase"></span></td>';
             }
-            echo '<td colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'"><div id="past-offers"> Previous Offers:<br><br>';
+            echo '<td colspan="'.($num_cols / 2).'" rowspan="'.$num_rows.'"><div id="past-offers"><h2>Past Banker Offers:</h2>';
             foreach ($offer_history as $offer) {
                 echo '$ '.number_format($offer).'<br><br>';                
             }
@@ -75,8 +79,10 @@
                 $index = ($i * $num_cols) + $j;
 
                 if ($cases[$index]["caseId"] != $player_case['caseId'] && $cases[$index]["caseId"] == $_POST['selected_case']) {
-                    echo '<td><span id="case-closed"><span class="case-num">'.$cases[$index]["caseId"].'</span><img src="assets/case.png" alt="closed briefcase"></span>';
-                    echo '<span id ="case-open"><span id="case-val">$'.rtrim(rtrim(number_format($cases[$index]["value"], 2), '0'), $decimal_seperator).'</span><img src="assets/case_open.png" alt="open briefcase"></span></td>';
+                    echo '<td><span id="case-closed"><span class="case-num">'.$cases[$index]["caseId"].'</span><img src="assets/case.png" alt="closed briefcase">
+                    </span>';
+                    echo '<span id="case-open"><span id="case-val">$'.rtrim(rtrim(number_format($cases[$index]["value"], 2), '0'), $decimal_seperator).'</span>
+                    <img src="assets/case_open.png" alt="open briefcase"></span></td>';
                 } elseif (!$cases[$index]["picked"]) {             
                     echo '<td';
                     if ($game_state != "banker_offer") {
@@ -103,7 +109,7 @@
         global $game_state;
         global $banker_offer;
         global $accept_offer;
-        global $player_winnings;
+        global $player_prize;
 
         echo '<span id="prompt">';
         if ($game_state == "round" && $round["to_open"] > 0 && isset($player_case)) {
@@ -119,7 +125,7 @@
         } elseif ($game_state == "final_reveal") {
             echo 'Let\'s see what your case '.($accept_offer ? 'was' : 'is').' worth:';
         } elseif ($game_state == "win_screen") {
-            echo 'You won $'.$player_winnings.'!';
+            echo 'You won $'.number_format($player_prize).'!';
         }
         echo '</span>';
     }
@@ -148,10 +154,10 @@
         <div id="main">
             <div id="amounts">
                 <table>
-                    <?php load_prize_board(); ?>
+                    <?php loadPrizeBoard(); ?>
                 </table>
             </div>
-                <div id="options">
+                <div id="board">
                     <table>
                         <?php displayBoard(); ?>                    
                         <tr id="selections">
@@ -168,7 +174,7 @@
                                     <button type="submit" name="accept_offer" value="true" class="round-btn">DEAL</button>
                                     <button type="submit" name="accept_offer" value="false" class="round-btn">NO DEAL</button>
                                 <?php elseif ($game_state == "final_reveal"): ?>
-                                    <button class="btn" type="submit" name="end" value="true">End Game</button>
+                                    <button class="btn" type="submit" name="prize" value="true">See Prize Won</button>
                                 <?php elseif ($game_state == "win_screen"): ?>
                                     <a href="credits.html"><button class="btn" type="button">Credits</button></a>
                                 <?php endif; ?>
