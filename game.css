@@ -1,5 +1,4 @@
 body {
-    /* margin: 0; */
     background-color: white;
     font-weight: bold;
     cursor: not-allowed;
@@ -138,7 +137,7 @@ body {
     visibility: hidden;
 }
 
-#options input[type="radio"] {
+#options input[type="radio"]:not(:last-child) {
     display: none;
     position: relative;
     left: 50%;
@@ -151,6 +150,19 @@ body {
 
 #options:not(:has(input[type="radio"]:checked)) #btn-select {
     display: none;
+}
+
+#banker {
+    /* position: relative; */
+    /* top: 50%; */
+    /* left: 50%; */
+    /* transform: translateY(-50%); */
+    /* text-align: center; */
+    /* margin: auto; */
+}
+
+#banker img {
+    width: 100%;
 }
 
 /* Player Selections */
@@ -174,10 +186,44 @@ button#btn-select {
     color: white;
     border: 8px double goldenrod;
     border-radius: 12px;
+    margin: 10px;
 }
 
 button#btn-select:hover {
     color: goldenrod;
+}
+
+#phone {    
+    max-height: 200px;
+    animation: shake .2s infinite;
+    cursor: grab;
+}
+
+.round-btn {
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px;
+    cursor: pointer;
+    text-align: center;
+    display: inline-block;
+    vertical-align: text-bottom;
+    border: 4px outset darkgoldenrod;
+}
+
+.round-btn:first-child {
+    background-color: green;    
+}
+
+.round-btn:last-child {
+    background-color: red;
+}
+
+.round-btn:hover {
+    border: 4px inset goldenrod;
 }
 
 /* Animations */
@@ -197,5 +243,23 @@ button#btn-select:hover {
     }
     100% {
         opacity: 1;
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: rotate(0deg);
+    }
+    25% {
+        transform: rotate(5deg);
+    }
+    50% {
+        transform: rotate(0deg);
+    }
+    75% {
+        transform: rotate(-5deg);
+    }
+    100% {
+        transform: rotate(0deg);
     }
 }

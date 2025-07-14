@@ -9,6 +9,7 @@
     $round;
     $cases_per_round = [6, 5, 4, 3, 2, 1, 1];
     $banker_offer;
+    $player_winnings;
 
     if (isset($_POST['state'])) {
         switch($_POST['state']) {
@@ -98,7 +99,8 @@
         if(isset($_SESSION["round"]))
             $round = $_SESSION["round"];
         if(isset($_SESSION["banker_offer"]))
-            $banker_offer = $_SESSION["banker_offer"];
+        if(isset($_SESSION["player_winnings"]))
+            $player_winnings = $_SESSION["player_winnings"];
     }
 
     function resetGame() {
@@ -108,6 +110,7 @@
         unset($_SESSION["game_state"]);
         unset($_SESSION["round"]);
         unset($SESSION["banker_offer"]);
+        unset($SESSION["player_winnings"]);
     }
 
     function updateGameState($new_state) {
@@ -174,7 +177,7 @@
         }
         $_SESSION["cases"] = $cases;
         
-        if (!$selected_case['caseId'] == $player_case) {
+        if ($selected_case['caseId'] != $player_case) {
             foreach($prize_status as &$prize) {
                 if ($prize['amount'] == $selected_case['value']) {
                     $prize['isSeen'] = true;
@@ -188,25 +191,37 @@
     function setBankerOffer() {
         global $prize_status;
         global $banker_offer;
+        global $player_winnings;
         $remaining_num_cases;
         $remaining_values_sum;
         $remaining_average;
         $remaining_max;
 
         loadSavedData();
-
-        foreach (array_reverse($prize_status) as $prize) {
-            if (!$prize['isSeen']) {
-                $remaining_num_cases += 1;
-                $remaining_values_sum += $prize['amount'];
-                if($prize['amount'] > $remaining_max) {
-                    $remaining_max = $prize['amount'];
+        if(!isset($_POST["accept_offer"])) {
+            foreach (array_reverse($prize_status) as $prize) {
+                if (!$prize['isSeen']) {
+                    $remaining_num_cases += 1;
+                    $remaining_values_sum += $prize['amount'];
+                    if($prize['amount'] > $remaining_max) {
+                        $remaining_max = $prize['amount'];
+                    }
                 }
             }
+            $remaining_average = $remaining_values_sum / $remaining_num_cases;
+
+            $banker_offer = floor($remaining_average);
+            $_SESSION['banker_offer'] = $banker_offer;
+        } else {
+            if(filter_var($_POST["accept_offer"], FILTER_VALIDATE_BOOLEAN)) {
+                $player_winnings = $banker_offer;
+                $_SESSION['player_winnings'] = $player_winnings;
+                updateGameState("final_reveal");
+            } else {
+                updateGameState("round");
+                updateRound();
+            }
         }
-        $remaining_average = $remaining_values_sum / $remaining_num_cases;
-        $banker_offer = $remaining_average;
-        $_SESSION['banker_offer'] = $banker_offer;
     }
 
     function finalReveal() {        
