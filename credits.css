@@ -1,0 +1,80 @@
+body {
+    background-color: black;
+    margin: 0px;
+    font-family: sans-serif;
+}
+
+#title {
+    position: absolute;
+    z-index: 3;
+    animation: zoomFadeOut 5s forwards;
+}
+
+#title img {
+    height: 100vh;
+    width: 100vw;
+}
+
+#header {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    max-height: 50px;
+    position: relative;
+    z-index: 2;
+}
+
+#header button#btn {
+    min-width: 10%;
+    height: 50px;
+    background-color: black;
+    color: white;
+    border: 8px double goldenrod;
+    border-radius: 12px;
+    margin: 10px;
+}
+
+#header button#btn:hover {
+    color: goldenrod;
+}
+
+#header a {
+    align-self: center;
+}
+
+#banner {
+    max-height: 50px;
+    margin-right: 25px;
+}
+
+#credits {
+    color: white;
+    text-align: center;
+    animation: scrollUp 30s linear infinite;
+}
+
+@keyframes scrollUp {
+    from {
+        transform: translateY(100%);
+    }
+
+    to {
+        transform: translateY(-100%);
+    }
+}
+
+@keyframes zoomFadeOut {
+    0% {
+        transform: scale(1.5, 1.5);
+    }
+
+    50% {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
