@@ -8,6 +8,7 @@
     $player_case;
     $round;
     $cases_per_round = [6, 5, 4, 3, 2, 1, 1];
+    $banker_offer;
 
     if (isset($_POST['state'])) {
         switch($_POST['state']) {
@@ -20,6 +21,9 @@
                 break;
             case "round":
                 updateRound();
+                break;
+            case "banker_offer":
+                setBankerOffer();
                 break;
             case "final_reveal":
                 finalReveal();
@@ -93,6 +97,8 @@
             $game_state = $_SESSION["game_state"];
         if(isset($_SESSION["round"]))
             $round = $_SESSION["round"];
+        if(isset($_SESSION["banker_offer"]))
+            $banker_offer = $_SESSION["banker_offer"];
     }
 
     function resetGame() {
@@ -101,12 +107,14 @@
         unset($_SESSION["player_case"]);
         unset($_SESSION["game_state"]);
         unset($_SESSION["round"]);
+        unset($SESSION["banker_offer"]);
     }
 
     function updateGameState($new_state) {
         global $game_state;
 
         $game_state = $new_state;
+        $_SESSION["game_state"] = $game_state;
     }
 
     function setPlayerCase() {
@@ -127,17 +135,20 @@
         global $cases_per_round;
         global $round;
         
-        if(isset($_POST['selected_case']) && isset($_SESSION["round"])) {
+        if(isset($_SESSION["round"])) {
             loadSavedData();
             updateCases();
 
             $round = $_SESSION["round"];
+
             $round["to_open"] -= 1;
 
-            if ($round["to_open"] == 0) {
+            if ($round["to_open"] == 0) {                
                 if ($round["number"] < count($cases_per_round)) {                    
                     $round["number"] += 1;
                     $round["to_open"] = $cases_per_round[$round["number"] - 1];
+                    updateGameState("banker_offer");
+                    unset($SESSION["banker_offer"]);
                 } else {
                     updateGameState("final_reveal");
                 }                
@@ -150,6 +161,7 @@
 
     function updateCases() {
         global $cases;
+        global $player_case;
         global $prize_status;
         $selected_case;
 
@@ -162,13 +174,39 @@
         }
         $_SESSION["cases"] = $cases;
         
-        foreach($prize_status as &$prize) {
-            if ($prize['amount'] == $selected_case['value']) {
-                $prize['isSeen'] = true;
-                break;
+        if (!$selected_case['caseId'] == $player_case) {
+            foreach($prize_status as &$prize) {
+                if ($prize['amount'] == $selected_case['value']) {
+                    $prize['isSeen'] = true;
+                    break;
+                }
             }
         }
         $_SESSION['prize_status'] = $prize_status;
+    }
+
+    function setBankerOffer() {
+        global $prize_status;
+        global $banker_offer;
+        $remaining_num_cases;
+        $remaining_values_sum;
+        $remaining_average;
+        $remaining_max;
+
+        loadSavedData();
+
+        foreach (array_reverse($prize_status) as $prize) {
+            if (!$prize['isSeen']) {
+                $remaining_num_cases += 1;
+                $remaining_values_sum += $prize['amount'];
+                if($prize['amount'] > $remaining_max) {
+                    $remaining_max = $prize['amount'];
+                }
+            }
+        }
+        $remaining_average = $remaining_values_sum / $remaining_num_cases;
+        $banker_offer = $remaining_average;
+        $_SESSION['banker_offer'] = $banker_offer;
     }
 
     function finalReveal() {        
